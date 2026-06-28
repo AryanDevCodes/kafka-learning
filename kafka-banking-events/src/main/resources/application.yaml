@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: kafka-banking-events
+  kafka:
+    bootstrap-servers: localhost:9092
+
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JacksonJsonSerializer
+    consumer:
+      group-id: notifications-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JacksonJsonDeserializer
+      properties:
+        spring.json.trusted.packages: "com.learn.aryandevcodes.events"
+        spring.json.value.default.type: "com.learn.aryandevcodes.events.PaymentCompletedEvent"
+        spring.json.use.type.headers: false
+server:
+  port: 8080
+
+app:
+  kafka:
+    topic:
+      payment-completed: payment-completed
