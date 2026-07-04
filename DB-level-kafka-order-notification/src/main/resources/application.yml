@@ -1,0 +1,34 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: kafka-order-notification
+  kafka:
+    # bootstrap-servers: Kafka kahan chal raha hai
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+      # producer value-serializer: Java object ko JSON me convert karega
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    
+    consumer:
+        # consumer group id: Kafka consumer group ka unique identifier
+        group-id: order-notification-group
+
+        # consumer auto-offset-reset: Kafka consumer ko pata chalega ki agar koi offset nahi hai to kaha se start karna hai
+        auto-offset-reset: earliest
+        key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+        # consumer value-deserializer: JSON ko Java object me convert karega
+        value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+        properties:
+            # consumer properties: Kafka consumer ke liye additional properties
+          "[spring.json.trusted.packages]": com.learn.aryandevcodes.kafkaorder.events
+  datasource:
+    url: jdbc:sqlite:./order-notification.db
+    driver-class-name: org.sqlite.JDBC
+  jpa:
+    database-platform: org.hibernate.community.dialect.SQLiteDialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true

@@ -7,6 +7,7 @@
       <list>
         <option value="$PROJECT_DIR$/kafka-banking-events/pom.xml" />
         <option value="$PROJECT_DIR$/kafka-order-notification/pom.xml" />
+        <option value="$PROJECT_DIR$/DB-level-kafka-order-notification/pom.xml" />
       </list>
     </option>
   </component>
