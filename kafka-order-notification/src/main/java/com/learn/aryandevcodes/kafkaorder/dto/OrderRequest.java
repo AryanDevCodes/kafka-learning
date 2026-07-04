@@ -13,6 +13,10 @@ public record OrderRequest(
 
     @NotNull(message = "Amount cannot be null")
     @Positive(message = "Amount must be a positive value")
-    Double amount
+    Double amount,
+
+    // Adding clientRequestId to the OrderRequest DTO for idempotency
+    @NotBlank(message = "Request ID cannot be blank")
+    String clientRequestId
 ) {
 } 

@@ -21,4 +21,11 @@ public class OrderController {
 
         return orderService.createOrder(request);
     }
+
+    /*
+    @PostMapping("/duplicate-test")
+    public OrderResponse duplicateTest(@Valid @RequestBody OrderRequest request) {
+        return orderService.createDuplicateTestOrder(request);
+    }
+    */
 }
