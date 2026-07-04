@@ -1,12 +1,12 @@
 package com.learn.aryandevcodes.kafkaorder.service;
 
-import com.learn.aryandevcodes.kafkaorder.repository.IdempotencyRepository;
 import com.learn.aryandevcodes.kafkaorder.dto.OrderRequest;
 import com.learn.aryandevcodes.kafkaorder.dto.OrderResponse;
 import com.learn.aryandevcodes.kafkaorder.events.OrderCreatedEvent;
 import com.learn.aryandevcodes.kafkaorder.model.IdempotencyRecord;
 import com.learn.aryandevcodes.kafkaorder.model.IdempotencyStatus;
 import com.learn.aryandevcodes.kafkaorder.producer.OrderEventProducer;
+import com.learn.aryandevcodes.kafkaorder.repository.IdempotencyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,13 +64,21 @@ public class OrderService {
                 .build();
 
         idempotencyRepository.save(record);
+        String orderId = null;
 
         try {
-            String orderId = "ORD-" + UUID.randomUUID();
+            orderId = "ORD-" + UUID.randomUUID();
             String eventId = "EVT-" + UUID.randomUUID();
 
             System.out.println("[2] New order created in database ");
             System.out.println("Order ID: " + orderId);
+            /*
+
+            if ("FAIL_BEFORE_KAFKA".equalsIgnoreCase(request.productName())) {
+                System.out.println("[TEST ERROR] Manual failure before Kafka publish");
+                throw new RuntimeException("Manual failure before Kafka publish");
+
+            }*/
 
             OrderCreatedEvent event = new OrderCreatedEvent(
                     eventId,
@@ -95,13 +103,20 @@ public class OrderService {
             idempotencyRepository.save(record);
             System.out.println("[IDEMPOTENCY] Request marked as COMPLETED");
             return response;
+
         } catch (Exception e) {
+            record.setOrderId(orderId);
             record.setStatus(IdempotencyStatus.FAILED);
             record.setErrorMessage(e.getMessage());
             record.setUpdatedAt(LocalDateTime.now());
             idempotencyRepository.save(record);
             System.out.println("[IDEMPOTENCY] Request marked as FAILED");
-            throw e;
+
+            return new OrderResponse(
+                    orderId,
+                    "FAILED",
+                    e.getMessage()
+            );
         }
     }
 
