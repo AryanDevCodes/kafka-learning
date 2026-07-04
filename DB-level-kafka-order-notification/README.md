@@ -306,5 +306,5 @@ Status: ORDER_CREATED
 [0] POST /orders called
 [1] Order creation started
 [IDEMPOTENCY] ClientRequestId = REQ-1001
-[IDEMPOTENCY] Duplicate completed request detected
+[IDEMPOTENCY] Duplicate request detected
 ```
